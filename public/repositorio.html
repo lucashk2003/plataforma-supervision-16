@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Repositorio — Supervisión 16</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #F7F8FA;
+      min-height: 100vh;
+    }
+
+    header {
+      background: #fff;
+      border-bottom: 1px solid #E2E6EC;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .header-left .eyebrow {
+      font-size: 11px;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: #6B7280;
+      margin-bottom: 4px;
+    }
+
+    .header-left h1 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .header-left h1 span { color: #1A56DB; }
+
+    .header-right {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+
+    a.volver, a.logout {
+      font-size: 13px;
+      color: #6B7280;
+      text-decoration: none;
+    }
+
+    a.volver:hover, a.logout:hover { color: #111827; }
+
+    main {
+      max-width: 1100px;
+      margin: 36px auto;
+      padding: 0 24px;
+    }
+
+    .buscador {
+      margin-bottom: 20px;
+    }
+
+    .buscador input {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1px solid #D1D5DB;
+      border-radius: 6px;
+      font-size: 14px;
+      outline: none;
+      transition: border-color .15s;
+    }
+
+    .buscador input:focus { border-color: #1A56DB; }
+
+    .table-wrap {
+      background: #fff;
+      border: 1px solid #E2E6EC;
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    thead tr {
+      background: #F1F5F9;
+      border-bottom: 1px solid #E2E6EC;
+    }
+
+    thead th {
+      font-size: 10.5px;
+      font-weight: 500;
+      letter-spacing: .09em;
+      text-transform: uppercase;
+      color: #6B7280;
+      padding: 12px 18px;
+      text-align: left;
+    }
+
+    th.col-orden  { width: 70px; text-align: center; }
+    th.col-fecha  { width: 130px; }
+    th.col-nombre { }
+    th.col-emite  { width: 90px; text-align: center; }
+    th.col-ver    { width: 80px; text-align: center; }
+
+    tbody tr {
+      border-bottom: 1px solid #E2E6EC;
+      transition: background .12s;
+    }
+
+    tbody tr:last-child { border-bottom: none; }
+    tbody tr:hover { background: #F0F4FF; }
+    tbody tr.oculto { display: none; }
+
+    tbody td {
+      padding: 13px 18px;
+      font-size: 14px;
+      vertical-align: middle;
+    }
+
+    td.col-orden {
+      text-align: center;
+      font-size: 12px;
+      color: #6B7280;
+    }
+
+    td.col-fecha {
+      font-size: 13px;
+      color: #6B7280;
+    }
+
+    td.col-emite { text-align: center; }
+
+    .badge {
+      display: inline-block;
+      background: #EEF3FF;
+      color: #1A56DB;
+      font-size: 11px;
+      font-weight: 500;
+      padding: 3px 9px;
+      border-radius: 4px;
+    }
+
+    td.col-ver { text-align: center; }
+
+    a.btn-ver {
+      display: inline-block;
+      background: #1A56DB;
+      color: #fff;
+      font-size: 12px;
+      padding: 5px 12px;
+      border-radius: 5px;
+      text-decoration: none;
+    }
+
+    a.btn-ver:hover { background: #1446B8; }
+
+    .sin-resultados {
+      text-align: center;
+      padding: 40px;
+      color: #6B7280;
+      font-size: 14px;
+      display: none;
+    }
+
+    .cargando {
+      text-align: center;
+      padding: 40px;
+      color: #6B7280;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <p class="eyebrow">Dirección General de Escuelas</p>
+    <h1>Repositorio <span id="titulo-año"></span> — <span>Supervisión 16</span></h1>
+  </div>
+  <div class="header-right">
+    <a href="/" class="volver">← Volver</a>
+    <a href="/logout" class="logout">Cerrar sesión</a>
+  </div>
+</header>
+
+<main>
+  <div class="buscador">
+    <input type="text" id="buscador" placeholder="Buscar por nombre de archivo..." />
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th class="col-orden">N.° Orden</th>
+          <th class="col-fecha">Fecha</th>
+          <th class="col-nombre">Nombre del documento</th>
+          <th class="col-emite">Emite</th>
+          <th class="col-ver">Ver</th>
+        </tr>
+      </thead>
+      <tbody id="tabla-body">
+        <tr>
+          <td colspan="5" class="cargando">Cargando documentos...</td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="sin-resultados" id="sin-resultados">No se encontraron documentos.</div>
+  </div>
+</main>
+
+<script>
+  const params = new URLSearchParams(window.location.search);
+  const año = params.get('año');
+
+  document.getElementById('titulo-año').textContent = año;
+
+  // Extrae la fecha del nombre del archivo
+  function extraerFecha(nombre) {
+    const match = nombre.match(/(\d{2})-([A-Z]{3})-(\d{4})/);
+    if (!match) return nombre;
+    const meses = { ENE:'01', FEB:'02', MAR:'03', ABR:'04', MAY:'05', JUN:'06',
+                    JUL:'07', AGO:'08', SET:'09', OCT:'10', NOV:'11', DIC:'12' };
+    return `${match[1]}/${meses[match[2]] || match[2]}/${match[3]}`;
+  }
+
+  // Extrae el ente emisor del nombre del archivo
+  function extraerEmite(nombre) {
+    if (nombre.startsWith('RES_')) return 'DGE';
+    if (nombre.startsWith('DECRETO_')) return 'DGE';
+    if (nombre.startsWith('NOTA_SUP_')) return 'SUP 16';
+    if (nombre.startsWith('BOLETIN_')) return 'DGE';
+    return 'DGE';
+  }
+
+  // Limpia el nombre para mostrar
+  function limpiarNombre(nombre) {
+    return nombre
+      .replace(/^\d{4}\//, '')   // saca el prefijo del año
+      .replace(/_/g, ' ')         // reemplaza _ por espacios
+      .replace(/\.pdf$/i, '');    // saca la extensión
+  }
+
+  fetch(`/api/archivos/${año}`)
+    .then(r => r.json())
+    .then(archivos => {
+      const tbody = document.getElementById('tabla-body');
+      tbody.innerHTML = '';
+
+      archivos.forEach((key, i) => {
+        const archivo = key.replace(`${año}/`, '');
+        const tr = document.createElement('tr');
+        tr.dataset.nombre = archivo.toLowerCase();
+        tr.innerHTML = `
+          <td class="col-orden">${i + 1}</td>
+          <td class="col-fecha">${extraerFecha(archivo)}</td>
+          <td class="col-nombre">${limpiarNombre(archivo)}</td>
+          <td class="col-emite"><span class="badge">${extraerEmite(archivo)}</span></td>
+          <td class="col-ver"><a class="btn-ver" href="/api/ver/${año}/${encodeURIComponent(archivo)}" target="_blank">Ver PDF</a></td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      // Buscador
+      document.getElementById('buscador').addEventListener('input', function() {
+        const q = this.value.toLowerCase();
+        let visibles = 0;
+        document.querySelectorAll('#tabla-body tr').forEach(tr => {
+          const match = tr.dataset.nombre && tr.dataset.nombre.includes(q);
+          tr.classList.toggle('oculto', !match);
+          if (match) visibles++;
+        });
+        document.getElementById('sin-resultados').style.display = visibles === 0 ? 'block' : 'none';
+      });
+    });
+</script>
+
+</body>
+</html>
