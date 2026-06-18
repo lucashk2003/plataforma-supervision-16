@@ -3,219 +3,134 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Repositorio de Resoluciones — Supervisión 16</title>
+  <title>Repositorios — Supervisión 16</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap');
-
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
-    :root {
-      --bg:        #F7F8FA;
-      --surface:   #FFFFFF;
-      --border:    #E2E6EC;
-      --accent:    #1A56DB;
-      --accent-bg: #EEF3FF;
-      --text:      #111827;
-      --muted:     #6B7280;
-      --row-hover: #F0F4FF;
-    }
 
     body {
       font-family: 'Inter', sans-serif;
-      background: var(--bg);
-      color: var(--text);
+      background: #F7F8FA;
       min-height: 100vh;
     }
 
-    /* ── HEADER ── */
     header {
-      background: var(--surface);
-      border-bottom: 1px solid var(--border);
-      padding: 28px 40px 24px;
+      background: #fff;
+      border-bottom: 1px solid #E2E6EC;
+      padding: 20px 40px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
     }
 
-    .header-eyebrow {
-      font-family: 'IBM Plex Mono', monospace;
+    .header-left .eyebrow {
       font-size: 11px;
-      letter-spacing: .12em;
+      letter-spacing: .1em;
       text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 6px;
+      color: #6B7280;
+      margin-bottom: 4px;
     }
 
-    header h1 {
-      font-size: 22px;
+    .header-left h1 {
+      font-size: 18px;
       font-weight: 600;
-      color: var(--text);
-      line-height: 1.3;
+      color: #111827;
     }
 
-    header h1 span {
-      color: var(--accent);
+    .header-left h1 span { color: #1A56DB; }
+
+    a.logout {
+      font-size: 13px;
+      color: #6B7280;
+      text-decoration: none;
     }
 
-    /* ── MAIN ── */
+    a.logout:hover { color: #111827; }
+
     main {
-      max-width: 1100px;
-      margin: 36px auto;
+      max-width: 700px;
+      margin: 48px auto;
       padding: 0 24px;
     }
 
-    /* ── TABLE WRAPPER ── */
-    .table-wrap {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      overflow: hidden;
-    }
-
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-
-    thead tr {
-      background: #F1F5F9;
-      border-bottom: 1px solid var(--border);
-    }
-
-    thead th {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 10.5px;
-      font-weight: 500;
-      letter-spacing: .09em;
-      text-transform: uppercase;
-      color: var(--muted);
-      padding: 12px 18px;
-      text-align: left;
-      white-space: nowrap;
-    }
-
-    thead th.col-order  { width: 70px; text-align: center; }
-    thead th.col-number { width: 160px; }
-    thead th.col-desc   { }
-    thead th.col-emite  { width: 90px; text-align: center; }
-
-    tbody tr {
-      border-bottom: 1px solid var(--border);
-      transition: background .12s;
-    }
-    tbody tr:last-child { border-bottom: none; }
-    tbody tr:hover { background: var(--row-hover); }
-
-    tbody td {
-      padding: 14px 18px;
+    h2 {
       font-size: 14px;
-      vertical-align: middle;
-    }
-
-    td.col-order {
-      text-align: center;
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 12px;
-      color: var(--muted);
-    }
-
-    td.col-number {
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 12.5px;
       font-weight: 500;
+      color: #6B7280;
+      margin-bottom: 20px;
+      text-transform: uppercase;
+      letter-spacing: .08em;
     }
 
-    td.col-desc a {
-      color: var(--accent);
+    .repositorios {
+      display: grid;
+      gap: 12px;
+    }
+
+    .repo-card {
+      background: #fff;
+      border: 1px solid #E2E6EC;
+      border-radius: 8px;
+      padding: 20px 24px;
       text-decoration: none;
-      font-weight: 500;
-      line-height: 1.45;
-    }
-    td.col-desc a:hover { text-decoration: underline; }
-
-    td.col-emite {
-      text-align: center;
+      color: #111827;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      transition: border-color .15s, box-shadow .15s;
     }
 
-    .badge-dge {
-      display: inline-block;
-      background: var(--accent-bg);
-      color: var(--accent);
-      font-family: 'IBM Plex Mono', monospace;
-      font-size: 11px;
-      font-weight: 500;
-      letter-spacing: .05em;
-      padding: 3px 9px;
-      border-radius: 4px;
+    .repo-card:hover {
+      border-color: #1A56DB;
+      box-shadow: 0 0 0 3px #EEF3FF;
     }
 
-    /* ── FOOTER ── */
-    footer {
-      text-align: center;
-      padding: 32px 24px;
-      font-size: 12px;
-      color: var(--muted);
+    .repo-card .año {
+      font-size: 20px;
+      font-weight: 600;
+      color: #1A56DB;
+    }
+
+    .repo-card .desc {
+      font-size: 13px;
+      color: #6B7280;
+      margin-top: 2px;
+    }
+
+    .repo-card .arrow {
+      font-size: 20px;
+      color: #D1D5DB;
     }
   </style>
 </head>
 <body>
 
 <header>
-  <p class="header-eyebrow">Dirección General de Escuelas · Provincia de Mendoza</p>
-  <h1>Repositorio de Resoluciones — <span>Supervisión 16</span></h1>
+  <div class="header-left">
+    <p class="eyebrow">Dirección General de Escuelas</p>
+    <h1>Repositorio Documental — <span>Supervisión 16</span></h1>
+  </div>
+  <a href="/logout" class="logout">Cerrar sesión</a>
 </header>
 
 <main>
-  <div class="table-wrap">
-    <table>
-      <thead>
-        <tr>
-          <th class="col-order">N.° Orden</th>
-          <th class="col-number">N.° Resolución</th>
-          <th class="col-desc">Descripción</th>
-          <th class="col-emite">Emite</th>
-        </tr>
-      </thead>
-      <tbody>
-
-        <tr>
-          <td class="col-order">1</td>
-          <td class="col-number">RESOL-2026-213</td>
-          <td class="col-desc">
-            <a href="RESOL-213-Convocatoria-a-Concurso-para-cubrir-la-Suplencia-del-Cargo-Directivo-del-CENS-N_-3-512-Heroes-del-Crucero-General-Belgrano.pdf" target="_blank">
-              Convocatoria a concurso para cubrir la suplencia del cargo directivo del CENS N.° 3-512 "Héroes del Crucero General Belgrano" — Malargüe
-            </a>
-          </td>
-          <td class="col-emite"><span class="badge-dge">DGE</span></td>
-        </tr>
-
-        <tr>
-          <td class="col-order">2</td>
-          <td class="col-number">RESOL-2026-242</td>
-          <td class="col-desc">
-            <a href="RESOL-242-Convocatoria-a-Concurso-para-cubrir-el-Cargo-de-Director-Suplente-del-CENS-3-482-EDUARDO-PINTO.pdf" target="_blank">
-              Convocatoria a concurso para cubrir el cargo de director suplente del CENS 3-482 "Eduardo Pinto" — Guaymallén
-            </a>
-          </td>
-          <td class="col-emite"><span class="badge-dge">DGE</span></td>
-        </tr>
-
-        <tr>
-          <td class="col-order">3</td>
-          <td class="col-number">RESOL-2026-2513</td>
-          <td class="col-desc">
-            <a href="Resolucion-2513-DGE_-Convocatoria-a-Concurso-Ordinarios-2026-de-horas-catedra-y-o-cargos-de-Educacion-Secundaria-Educacion-Tecnica-y-Trabajo-y-Educacion.pdf" target="_blank">
-              Convocatoria a concursos ordinarios 2026 de horas cátedra y/o cargos de Educación Secundaria, Educación Técnica y Trabajo, y Educación Permanente de Jóvenes y Adultos
-            </a>
-          </td>
-          <td class="col-emite"><span class="badge-dge">DGE</span></td>
-        </tr>
-
-      </tbody>
-    </table>
+  <h2>Seleccioná un repositorio</h2>
+  <div class="repositorios">
+    <a href="/repositorio.html?año=2012" class="repo-card">
+      <div>
+        <div class="año">2012</div>
+        <div class="desc">Resoluciones y documentación del año 2012</div>
+      </div>
+      <span class="arrow">›</span>
+    </a>
+    <a href="/repositorio.html?año=2013" class="repo-card">
+      <div>
+        <div class="año">2013</div>
+        <div class="desc">Resoluciones y documentación del año 2013</div>
+      </div>
+      <span class="arrow">›</span>
+    </a>
   </div>
 </main>
-
-<footer>
-  Supervisión 16 · Dirección General de Escuelas · Provincia de Mendoza
-</footer>
 
 </body>
 </html>
