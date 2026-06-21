@@ -106,7 +106,8 @@
     th.col-nombre { }
     th.col-emite  { width: 90px; text-align: center; }
     th.col-ver    { width: 80px; text-align: center; }
-
+    th.col-archivo { width: 200px; font-size: 11px; }
+    td.col-archivo { font-size: 11px; color: #6B7280; word-break: break-all; }
     tbody tr {
       border-bottom: 1px solid #E2E6EC;
       transition: background .12s;
@@ -190,19 +191,20 @@
 
 <main>
   <div class="buscador">
-    <input type="text" id="buscador" placeholder="Buscar por nombre de archivo..." />
+    <input type="text" id="buscador" placeholder="Buscar por nombre de archivo o descripcion..." />
   </div>
 
   <div class="table-wrap">
     <table>
       <thead>
-        <tr>
-          <th class="col-orden">N.° Orden</th>
-          <th class="col-fecha">Fecha</th>
-          <th class="col-nombre">Nombre del documento</th>
-          <th class="col-emite">Emite</th>
-          <th class="col-ver">Ver</th>
-        </tr>
+          <tr>
+            <th class="col-orden">N.° Orden</th>
+            <th class="col-fecha">Fecha</th>
+            <th class="col-archivo">Nombre del archivo</th>
+            <th class="col-nombre">Descripción</th>
+            <th class="col-emite">Emite</th>
+            <th class="col-ver">Ver</th>
+          </tr>
       </thead>
       <tbody id="tabla-body">
         <tr>
@@ -248,6 +250,7 @@
       tr.innerHTML = `
         <td class="col-orden">${i + 1}</td>
         <td class="col-fecha">${extraerFecha(archivo)}</td>
+        <td class="col-archivo">${archivo}</td>
         <td class="col-nombre">${descripcion}</td>
         <td class="col-emite"><span class="badge">${extraerEmite(archivo)}</span></td>
         <td class="col-ver"><a class="btn-ver" href="/api/ver/${año}/${encodeURIComponent(archivo)}" target="_blank">Ver PDF</a></td>
