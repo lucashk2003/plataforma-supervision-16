@@ -215,57 +215,69 @@
 </main>
 
 <script>
- const params = new URLSearchParams(window.location.search);
+  const params = new URLSearchParams(window.location.search);
   const año = params.get('año');
 
   document.getElementById('titulo-año').textContent = año;
 
+  // Extrae la fecha del nombre del archivo
   function extraerFecha(nombre) {
     const match = nombre.match(/(\d{2})-([A-Z]{3})-(\d{4})/);
-    if (!match) return '—';
+    if (!match) return nombre;
     const meses = { ENE:'01', FEB:'02', MAR:'03', ABR:'04', MAY:'05', JUN:'06',
                     JUL:'07', AGO:'08', SET:'09', OCT:'10', NOV:'11', DIC:'12' };
     return `${match[1]}/${meses[match[2]] || match[2]}/${match[3]}`;
   }
 
+  // Extrae el ente emisor del nombre del archivo
   function extraerEmite(nombre) {
+    if (nombre.startsWith('RES_')) return 'DGE';
+    if (nombre.startsWith('DECRETO_')) return 'DGE';
     if (nombre.startsWith('NOTA_SUP_')) return 'SUP 16';
+    if (nombre.startsWith('BOLETIN_')) return 'DGE';
     return 'DGE';
   }
 
-  Promise.all([
-    fetch(`/api/archivos/${año}`).then(r => r.json()),
-    fetch(`/metadatos${año}.json`).then(r => r.json()).catch(() => ({}))
-  ]).then(([archivos, metadatos]) => {
-    const tbody = document.getElementById('tabla-body');
-    tbody.innerHTML = '';
+  // Limpia el nombre para mostrar
+  function limpiarNombre(nombre) {
+    return nombre
+      .replace(/^\d{4}\//, '')   // saca el prefijo del año
+      .replace(/_/g, ' ')         // reemplaza _ por espacios
+      .replace(/\.pdf$/i, '');    // saca la extensión
+  }
 
-    archivos.forEach((key, i) => {
-      const archivo = key.replace(`${año}/`, '');
-      const descripcion = metadatos[archivo] || archivo.replace(/_/g, ' ').replace(/\.pdf$/i, '');
-      const tr = document.createElement('tr');
-      tr.dataset.nombre = (archivo + ' ' + descripcion).toLowerCase();
-      tr.innerHTML = `
-        <td class="col-orden">${i + 1}</td>
-        <td class="col-fecha">${extraerFecha(archivo)}</td>
-        <td class="col-nombre">${descripcion}</td>
-        <td class="col-emite"><span class="badge">${extraerEmite(archivo)}</span></td>
-        <td class="col-ver"><a class="btn-ver" href="/api/ver/${año}/${encodeURIComponent(archivo)}" target="_blank">Ver PDF</a></td>
-      `;
-      tbody.appendChild(tr);
-    });
+  fetch(`/api/archivos/${año}`)
+    .then(r => r.json())
+    .then(archivos => {
+      const tbody = document.getElementById('tabla-body');
+      tbody.innerHTML = '';
 
-    document.getElementById('buscador').addEventListener('input', function() {
-      const q = this.value.toLowerCase();
-      let visibles = 0;
-      document.querySelectorAll('#tabla-body tr').forEach(tr => {
-        const match = tr.dataset.nombre && tr.dataset.nombre.includes(q);
-        tr.classList.toggle('oculto', !match);
-        if (match) visibles++;
+      archivos.forEach((key, i) => {
+        const archivo = key.replace(`${año}/`, '');
+        const tr = document.createElement('tr');
+        tr.dataset.nombre = archivo.toLowerCase();
+        tr.innerHTML = `
+          <td class="col-orden">${i + 1}</td>
+          <td class="col-fecha">${extraerFecha(archivo)}</td>
+          <td class="col-nombre">${limpiarNombre(archivo)}</td>
+          <td class="col-emite"><span class="badge">${extraerEmite(archivo)}</span></td>
+          <td class="col-ver"><a class="btn-ver" href="/api/ver/${año}/${encodeURIComponent(archivo)}" target="_blank">Ver PDF</a></td>
+        `;
+        tbody.appendChild(tr);
       });
-      document.getElementById('sin-resultados').style.display = visibles === 0 ? 'block' : 'none';
+
+      // Buscador
+      document.getElementById('buscador').addEventListener('input', function() {
+        const q = this.value.toLowerCase();
+        let visibles = 0;
+        document.querySelectorAll('#tabla-body tr').forEach(tr => {
+          const match = tr.dataset.nombre && tr.dataset.nombre.includes(q);
+          tr.classList.toggle('oculto', !match);
+          if (match) visibles++;
+        });
+        document.getElementById('sin-resultados').style.display = visibles === 0 ? 'block' : 'none';
+      });
     });
-  });
 </script>
 
 </body>
