@@ -58,7 +58,7 @@ app.get('/login.html', (req, res) => {
 
 // POST /login — procesa el formulario de login
 app.post('/login', (req, res) => {
-  console.log('Body recibido:', req.body);
+  
   const { usuario, password } = req.body;
   if (usuario === process.env.ADMIN_USER && password === process.env.ADMIN_PASS) {
     req.session.logueado = true;
