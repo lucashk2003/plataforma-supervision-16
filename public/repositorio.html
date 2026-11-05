@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Repositorio — Supervisión 16</title>
+  <link rel="stylesheet" href="/estilos.css" />
+</head>
+<body>
+<header>
+  <div class="header-left">
+    <p class="eyebrow">Dirección General de Escuelas</p>
+    <h1><span id="titulo"></span> — <span>Supervisión 16</span></h1>
+  </div>
+  <div class="header-right">
+    <a href="/" class="volver" id="volver">← Volver</a>
+    <a href="/logout" class="logout">Cerrar sesión</a>
+  </div>
+</header>
+
+<main class="ancho">
+  <div class="buscador">
+    <input type="text" id="buscador" placeholder="Buscar por nombre de archivo o descripción..." />
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th class="col-orden">N.° Orden</th>
+          <th class="col-fecha">Fecha</th>
+          <th class="col-archivo">Nombre del archivo</th>
+          <th class="col-nombre">Descripción</th>
+          <th class="col-emite">Emite</th>
+          <th class="col-ver">Ver</th>
+        </tr>
+      </thead>
+      <tbody id="tabla-body">
+        <tr><td colspan="6" class="cargando">Cargando documentos...</td></tr>
+      </tbody>
+    </table>
+    <div class="sin-resultados" id="sin-resultados">No se encontraron documentos.</div>
+  </div>
+</main>
+
+<script src="/comun.js"></script>
+<script>
+  const params = new URLSearchParams(location.search);
+  const id = params.get('id') || params.get('año'); // 'año' por compatibilidad con links viejos
+  const tbody = document.getElementById('tabla-body');
+
+  fetch(`/api/repositorio/${encodeURIComponent(id)}`)
+    .then(r => { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(repo => {
+      document.title = `${repo.titulo} — Supervisión 16`;
+      document.getElementById('titulo').textContent = repo.seccionTitulo === 'Resoluciones'
+        ? `Repositorio ${repo.titulo}` : `${repo.seccionTitulo} · ${repo.titulo}`;
+      document.getElementById('volver').href = `/seccion.html?s=${encodeURIComponent(repo.seccion)}`;
+
+      const filas = Comun.ordenar(repo.archivos.map(a => Comun.armarFila(a, repo.metadatos[a], repo.emiteDefault)));
+      if (!filas.length) {
+        tbody.innerHTML = '<tr><td colspan="6" class="cargando">Este repositorio todavía no tiene documentos.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = filas.map((f, i) => `
+        <tr data-busqueda="${Comun.esc((f.archivo + ' ' + f.descripcion).toLowerCase())}">
+          <td class="col-orden">${i + 1}</td>
+          <td class="col-fecha">${f.fecha ? f.fecha.texto : '<span class="sin-dato">—</span>'}</td>
+          <td class="col-archivo">${Comun.esc(f.archivo)}</td>
+          <td class="col-nombre">${Comun.esc(f.descripcion)}</td>
+          <td class="col-emite">${f.emite ? `<span class="badge">${Comun.esc(f.emite)}</span>` : '<span class="sin-dato">—</span>'}</td>
+          <td class="col-ver"><a class="btn-ver" href="/api/ver/${encodeURIComponent(repo.id)}/${encodeURIComponent(f.archivo)}" target="_blank" rel="noopener">Ver PDF</a></td>
+        </tr>`).join('');
+
+      document.getElementById('buscador').addEventListener('input', function () {
+        const q = this.value.toLowerCase();
+        let visibles = 0;
+        tbody.querySelectorAll('tr').forEach(tr => {
+          const coincide = tr.dataset.busqueda.includes(q);
+          tr.classList.toggle('oculto', !coincide);
+          if (coincide) visibles++;
+        });
+        document.getElementById('sin-resultados').style.display = visibles === 0 ? 'block' : 'none';
+      });
+    })
+    .catch(() => {
+      tbody.innerHTML = '<tr><td colspan="6" class="cargando">No se pudo cargar el repositorio. Volvé al inicio y probá de nuevo.</td></tr>';
+    });
+</script>
+</body>
+</html>

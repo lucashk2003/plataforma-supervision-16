@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Repositorio documental — Supervisión 16</title>
+  <link rel="stylesheet" href="/estilos.css" />
+</head>
+<body>
+<header>
+  <div class="header-left">
+    <p class="eyebrow">Dirección General de Escuelas</p>
+    <h1><span id="titulo-seccion"></span> — <span>Supervisión 16</span></h1>
+  </div>
+  <div class="header-right">
+    <a href="/" class="volver">← Volver</a>
+    <a href="/logout" class="logout">Cerrar sesión</a>
+  </div>
+</header>
+<main>
+  <h2>Seleccioná un repositorio</h2>
+  <div class="repositorios" id="lista"><p class="mensaje">Cargando…</p></div>
+</main>
+<script src="/comun.js"></script>
+<script>
+  const idSeccion = new URLSearchParams(location.search).get('s');
+  fetch('/api/repositorios').then(r => r.json()).then(secciones => {
+    const sec = secciones.find(s => s.id === idSeccion);
+    if (!sec) { location.replace('/'); return; }
+    document.title = `${sec.titulo} — Supervisión 16`;
+    document.getElementById('titulo-seccion').textContent = sec.titulo;
+    document.getElementById('lista').innerHTML = sec.repositorios.map(r => `
+      <a href="/repositorio.html?id=${encodeURIComponent(r.id)}" class="repo-card">
+        <div class="titulo">${Comun.esc(r.titulo)}</div>
+        <span class="arrow">›</span>
+      </a>`).join('');
+  }).catch(() => {
+    document.getElementById('lista').innerHTML = '<p class="mensaje">No se pudo cargar la lista. Recargá la página o volvé a iniciar sesión.</p>';
+  });
+</script>
+</body>
+</html>

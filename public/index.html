@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Repositorio documental — Supervisión 16</title>
+  <link rel="stylesheet" href="/estilos.css" />
+</head>
+<body>
+<header>
+  <div class="header-left">
+    <p class="eyebrow">Dirección General de Escuelas</p>
+    <h1>Repositorio documental — <span>Supervisión 16</span></h1>
+  </div>
+  <a href="/logout" class="logout">Cerrar sesión</a>
+</header>
+<main>
+  <h2>Seleccioná una sección</h2>
+  <div class="repositorios" id="lista"><p class="mensaje">Cargando…</p></div>
+</main>
+<script src="/comun.js"></script>
+<script>
+  fetch('/api/repositorios').then(r => r.json()).then(secciones => {
+    document.getElementById('lista').innerHTML = secciones.map(s => `
+      <a href="/seccion.html?s=${encodeURIComponent(s.id)}" class="repo-card">
+        <div>
+          <div class="titulo">${Comun.esc(s.titulo)}</div>
+          <div class="desc">${Comun.esc(s.descripcion)}</div>
+        </div>
+        <span class="arrow">›</span>
+      </a>`).join('');
+  }).catch(() => {
+    document.getElementById('lista').innerHTML = '<p class="mensaje">No se pudo cargar la lista. Recargá la página o volvé a iniciar sesión.</p>';
+  });
+</script>
+</body>
+</html>
