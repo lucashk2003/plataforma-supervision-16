@@ -1,0 +1,37 @@
+{
+  "secciones": [
+    {
+      "id": "resoluciones",
+      "titulo": "Resoluciones",
+      "descripcion": "Resoluciones y documentación por año",
+      "emiteDefault": "DGE",
+      "repositorios": [
+        { "id": "2012", "titulo": "2012", "prefijo": "2012", "metadatos": "metadatos2012.json" },
+        { "id": "2013", "titulo": "2013", "prefijo": "2013", "metadatos": "metadatos2013.json" },
+        { "id": "2014", "titulo": "2014", "prefijo": "2014", "metadatos": "metadatos2014.json" },
+        { "id": "2015", "titulo": "2015", "prefijo": "2015", "metadatos": "metadatos2015.json" },
+        { "id": "2016", "titulo": "2016", "prefijo": "2016" },
+        { "id": "2018", "titulo": "2018", "prefijo": "2018", "metadatos": "metadatos2018.json" }
+      ]
+    },
+    {
+      "id": "memorandums",
+      "titulo": "Memorandums",
+      "descripcion": "Memorandums por año",
+      "repositorios": [
+        { "id": "memos2020", "titulo": "Memorandums 2020", "prefijo": "memos2020", "metadatos": "metadatos_memos2020.json" },
+        { "id": "memos2021", "titulo": "Memorandums 2021", "prefijo": "memos2021", "metadatos": "metadatos_memos2021.json" }
+      ]
+    },
+    {
+      "id": "expedientes",
+      "titulo": "Expedientes",
+      "descripcion": "Notas, anexos y planillas de expedientes",
+      "repositorios": [
+        { "id": "expedientes-notas", "titulo": "Notas", "prefijo": "expedientes/notas", "metadatos": "metadatos_expedientes_notas.json" },
+        { "id": "expedientes-anexos", "titulo": "Anexos", "prefijo": "expedientes/anexos", "metadatos": "metadatos_expedientes_anexos.json" },
+        { "id": "expedientes-planillas", "titulo": "Planillas de expedientes entrados y salidos", "prefijo": "expedientes/planillas", "metadatos": "metadatos_expedientes_planillas.json" }
+      ]
+    }
+  ]
+}
